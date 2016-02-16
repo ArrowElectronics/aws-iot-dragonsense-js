@@ -1,0 +1,47 @@
+{
+  "name": "node-sensor-aws",
+  "version": "0.0.1",
+  "description": "Sensor dashboard connecting multiple ble sensors - built with aws libraries",
+  "keywords": [
+    "schedule",
+    "task",
+    "job",
+    "activity",
+    "monitor",
+    "dragonboard",
+    "aws"
+  ],
+  "author": {
+    "name": "Greg Tam",
+    "email": "gtam@arrow.com",
+    "url": "http://arrow.com"
+  },
+  "bin": {
+    "module-name": "./bin/module-name"
+  },
+  "scripts": {
+    "start": "node src/app.js",
+    "lint": "./node_modules/.bin/eslint lib"
+  },
+  "main": "src/app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arrowelectronics/aws-iot-dragonsense-js.git"
+  },
+  "eslintConfig":{
+    "env":{
+      "node":true
+    }
+  },
+  "dependencies": {
+    "node-schedule" : "0.2.x",
+    "noble" : "1.1.x",
+    "noble-device" : "1.1.x",
+    "sensortag" : "1.2.x",
+    "eslint": "1.4.x",
+    "async": "~0.2.7",
+    "aws-iot-device-sdk":"1.0.x",
+    "curlrequest":"0.5.x",
+    "delayed":"1.0.x"
+  }
+}

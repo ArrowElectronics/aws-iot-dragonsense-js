@@ -1,0 +1,23 @@
+{
+  "name": "dragonsense-config",
+  "version": "0.1.0",
+  "description": "The configuration for the DragonSense examples.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arrowelectronics/aws-iot-dragonsense-js.git"
+  },
+  "keywords": [
+    "DragonBoard",
+    "AWSIoT"
+  ],
+  "author": "Arrow Electronics",
+  "license": "Apache",
+  "bugs": {
+    "url": "https://github.com/arrowelectronics/aws-iot-dragonsense-js/issues"
+  },
+  "homepage": "https://github.com/arrowelectronics/aws-iot-dragonsense-js#readme"
+}

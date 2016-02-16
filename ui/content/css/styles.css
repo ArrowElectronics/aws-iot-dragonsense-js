@@ -1,0 +1,557 @@
+body {
+    background-color: #F4F5F6;
+}
+
+/* Utility classes */
+.relative {
+    position: relative;
+}
+.pointed-corners {
+    border-radius: 0;
+    border: 0;
+    -webkit-box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.35);
+    -moz-box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.35);
+    box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.35);
+    padding: 12px;
+}
+.padding-lr-100 {
+    padding: 0 100px;
+}
+.no-left-padding {
+    padding-left: 15px;
+}
+
+/* Nav bar */
+.navbar-brand, .navbar-nav li a.dropdown-toggle {
+    line-height: 70px;
+    height: 60px;
+    padding-top: 0;
+}
+
+.navbar {
+    border-bottom: 3px solid #FF3C00;
+}
+
+/* Headers */
+h1.title {
+    background: transparent url(../gfxs/dragonpulse-title.png) center center no-repeat;
+    background-size: 337px 60px;
+    text-indent: -99999px;
+    padding: 60px 20px 56px;
+}
+
+h3 {
+    font-weight: 300;
+    text-indent: 35px;
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+/* Process page sprite */
+h3.process-page {
+    background: transparent url(../gfxs/sprites@2x.png) no-repeat;
+    background-size: 26px 243px;
+}
+h3.general-info {
+    background-position: 0 0;
+}
+h3.network {
+    background-position: 0 -57px;
+}
+h3.storage {
+    background-position: 0 -115px;
+}
+h3.processes {
+    background-position: 0 -173px;
+}
+h5.network-graph-label {
+    font-size: 11px;
+    color: #777;
+    margin-bottom: 0;
+    font-weight: normal;
+}
+.time-wrap h5 {
+    font-size: 11px;
+    font-weight: normal;
+    color: #aaa;
+    text-indent: 18px;
+    background: transparent url(../gfxs/sprites@2x.png) no-repeat;
+    background-size: 26px 243px;
+    background-position: 0 -231px;
+    position: absolute;
+}
+.panel-eq-height .time-wrap h5, .panel-led .time-wrap h5 {
+    left: 28px;
+    bottom: 15px;
+}
+.time-wrap.processes h5 {
+    right: 27px;
+    top: 27px;
+}
+.time-wrap.sensors h5 {
+    right: 27px;
+    top: 30px;
+    margin-top: 0;
+}
+
+
+/* Panels */
+.panel.panel-eq-height {
+    margin-top: 50px;
+    padding-bottom: 40px;
+    position: relative;
+}
+.panel.panel-sensor-page {
+    margin-top: 0;
+    padding-bottom: 12px;
+    position: relative;
+}
+
+.panel.panel-led {
+    min-height: 482px;
+    /*padding-bottom: 40px;*/
+    position: relative;
+}
+
+/* Tables */
+table.table-unstyled {
+    border-collapse: collapse;
+}
+table.table-unstyled tr td {
+    padding-left: 15px;
+    padding-bottom: 15px;
+    font-size: 13px;
+    color: #777;
+}
+table.table-unstyled tr td:first-child {
+    font-weight: 500;
+    padding-left: 0;
+    color: #333;
+}
+table.table-unstyled tr td:first-child:after {
+    content: ": ";
+}
+table.table-unstyled tr td.db-logo {
+    font-size: 16.5px;
+    font-weight: 300;
+}
+table.table-unstyled tr td.db-logo span.red {
+    color: #FF3B00;
+}
+table.table-unstyled tr td.db-logo span.black {
+    color: #424242;
+}
+table.table-unstyled tr td.db-logo sup {
+    font-size: 8px;
+    font-weight: 300;
+}
+table.tbl-processes {
+    margin-top: 20px;
+}
+table.tbl-processes th {
+    font-weight: 500;
+    font-size: 13px;
+    color: #333;
+    border-bottom: 1px solid #777 !important;
+}
+table.tbl-processes td {
+     border: 0 !important;
+     font-size: 13px;
+     color: #777;
+}
+table.tbl-processes th:first-child,
+table.tbl-processes td:first-child {
+    padding-left: 0;
+}
+table.tbl-processes td.emphasis {
+    color: #FF3C00;
+    font-weight: 500;
+}
+
+/* C3 overrides */
+/* Network graph */
+#network-graph.c3 .c3-axis.c3-axis-y path {
+    fill: none;
+    stroke: #d8d8d8;
+}
+#network-graph.c3 .c3-axis.c3-axis-y .tick line {
+    fill: none;
+    stroke: none;
+}
+#network-graph.c3 rect.c3-event-rect.c3-event-rect-0 {
+    fill: #ECECEC;
+    /*stroke: green;*/
+    stroke: #d8d8d8;
+    fill-opacity: 1;
+}
+#network-graph.c3 .c3-axis.c3-axis-y .tick text  {
+    fill: rgba(119, 119, 119, 0.5);
+}
+/* Gyroscope and Accelerometer Charts */
+.gyroscope-chart.c3 .c3-axis.c3-axis-y .tick line, .accelerometer-chart.c3 .c3-axis.c3-axis-y .tick line {
+    fill: none;
+    stroke: none;
+}
+.gyroscope-chart.c3 .c3-axis.c3-axis-y path, .accelerometer-chart.c3 .c3-axis.c3-axis-y path {
+    fill: none;
+    stroke: none;
+}
+.gyroscope-chart.c3 .c3-axis.c3-axis-y .tick text, .accelerometer-chart.c3 .c3-axis.c3-axis-y .tick text  {
+    fill: #777;
+    font-size: 8px;
+}
+.gyroscope-chart.c3 .c3-ygrid, .accelerometer-chart.c3 .c3-ygrid {
+    stroke: #ddd;
+    stroke-dasharray: 0,0;
+}
+
+/* Storage */
+.list-unstyled.list-storage code {
+    color: #FF3C00;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 0;
+}
+
+.list-unstyled.list-storage small {
+    color: #777;
+    font-size: 11px;
+    font-weight: normal;
+}
+
+/* Progress bar overrides */
+.progress.bar-storage {
+    box-shadow: none;
+    border-radius: 0;
+    border: 1px solid #D8D8D8;
+    line-height: 5px;
+    height: 5px;
+    background: #ECECEC;
+}
+
+.progress.bar-storage .progress-bar {
+    background-color: #666;
+}
+
+/* Volume page */
+/* Volume page sprites */
+h3.volume-page {
+    background: transparent url(../gfxs/sprites-volume@2x.png) no-repeat;
+    background-size: 30px 251px;
+}
+h3.volume-log {
+    background-position: 0 0;
+}
+h3.led-control {
+    background: transparent url(../gfxs/sprites-bulb@2x.png) no-repeat;
+    background-size: 91px 416px;
+    background-position: 0 0px;
+    margin-bottom: 50px;
+}
+
+.volume-graph-wrap {
+    min-height: 130px;
+}
+.volume-graph {
+    background: transparent url(../gfxs/volume-bg-xs.jpg) no-repeat center center;
+    background-size: 244px 41px;
+    width: 244px;
+    height: 41px;
+    position: relative;
+}
+.volume-item .volume-circle {
+    background: transparent url(../gfxs/sprites-volume@2x.png) no-repeat;
+    background-size: 30px 251px;
+    width: 29px;
+    height: 30px;
+    position: absolute;
+    top: 6px;
+}
+.volume-item .volume-circle.circle-plus {
+    background-position: -1px -115px;
+}
+.volume-item .volume-circle.circle-minus {
+    background-position: -1px -168px;
+}
+.volume-item .volume-time {
+    transform: rotate(90deg);
+    transform-origin: right, top;
+    -ms-transform: rotate(90deg);
+    -ms-transform-origin:right, top;
+    -webkit-transform: rotate(90deg);
+    -webkit-transform-origin:right, top;
+    position: absolute;
+    color: rgba(119, 119, 119, 0.5);
+    font-weight: normal;
+    font-size: 11px;
+    top: 64px;
+}
+
+
+/* LED Control */
+.led-status {
+    font-size: 13px;
+    font-weight: normal;
+    color: #777;
+}
+
+.led-status span, .vol-desc {
+    font-weight: 500;
+    color: #333;
+}
+.btn-group-vertical .btn.btn-status {
+    border-top-right-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    height: 55px;
+    color: #aaa;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid #D8D8D8;
+    /*border-bottom: 0;*/
+    background: #ECECEC;
+}
+.btn-group-vertical .btn.btn-status:hover {
+    z-index: 0;
+    color: #555;
+}
+.btn-group-vertical .btn.btn-status.on {
+    border: 1px solid #6FBA1E;
+    border-bottom: 0;
+    background: #6FBA1E;
+    color: #fff;
+    cursor: default;
+}
+.btn-group-vertical .btn.btn-status.off {
+    border: 1px solid #E12C0D;
+    border-top: 0;
+    background: #E12C0D;
+    color: #fff;
+    cursor: default;
+}
+
+/* LED Control in Process Page */
+.bulb-status {
+    background: transparent url(../gfxs/sprites-bulb@2x.png) no-repeat;
+    background-size: 91px 416px;
+    width: 91px;
+    height: 91px;
+    margin: 8px auto 25px;
+}
+.bulb-status.on {
+    background-position: 0 -133px;
+}
+.bulb-status.off {
+    background-position: 0 -325px;
+}
+.bulb-led-status {
+    font-size: 13px;
+    font-weight: normal;
+    color: #333;
+    margin-top: 10px;
+    margin-bottom: 50px;
+}
+.bulb-led-status span {
+    font-weight: 500;
+}
+.btn-group-vertical .btn.btn-led-status {
+    border-top-right-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    height: 55px;
+    color: #666;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid #D8D8D8;
+    background: #fff;
+}
+.btn-group-vertical .btn.btn-led-status:hover {
+    z-index: 0;
+    background: #f1f1f1;
+}
+.btn-group-vertical .btn.btn-led-status.on {
+    border: 1px solid #3D9AD1;
+    border-bottom: 0;
+    background: #3D9AD1;
+    color: #fff;
+    cursor: default;
+}
+.btn-group-vertical .btn.btn-led-status.off {
+    border: 1px solid #666;
+    border-top: 0;
+    background: #666;
+    color: #fff;
+    cursor: default;
+}
+
+/* DragonSense page */
+/* DragonSense page sprites */
+h3.sensor-page {
+    background: transparent url(../gfxs/sprites-sensor@2x.png) no-repeat;
+    background-size: 26px 207px;
+    margin-top: 30px;
+    margin-bottom: 23px;
+}
+h3.sensor-page.gyroscope {
+    background-position: 0 0;
+    margin-left: 15px;
+}
+h3.sensor-page.accelerometer {
+    background-position: 0 -60px;
+
+}
+h3.sensor-page.ir-temperature, h3.sensor-page.light-intensity {
+    background: none;
+    text-align: center;
+    text-indent: 0;
+    margin-bottom: 20px;
+}
+h3.sensor-page i.db-icon {
+    background: transparent url(../gfxs/sprites-sensor@2x.png) no-repeat;
+    background-size: 26px 207px;
+    display: inline-block;
+    position: relative;
+}
+h3.sensor-page.ir-temperature > i.temperature-icon {
+    background-position: 0 -120px;
+    width: 17px;
+    height: 25px;
+    top: 4px;
+    margin-right: 8px;
+}
+
+h3.sensor-page.light-intensity > i.intensity-icon {
+    background-position: 0 -180px;
+    width: 25px;
+    height: 27px;
+    top: 4px;
+    margin-right: 8px;
+}
+
+.mac-address {
+    text-align: center;
+    margin-top: 50px;
+    border: 1px solid #777;
+}
+.mac-address h5 {
+    color: #777;
+    font-size: 16px;
+    font-weight: 300;
+}
+
+
+h4.h4-center {
+    line-height: 190px;
+    height: 211px;
+    text-align: center;
+    white-space: nowrap;
+    margin: 0;
+    font-size: 28.5px;
+    font-weight: 300;
+    color: #777;
+}
+h4.h4-center span {
+    font-weight: normal;
+    color: #FF3C00;
+}
+.celsius {
+
+    padding: 0 !important;
+    height: 211px;
+}
+.celsius .time-wrap2 {
+    width: 100%;
+    left: 0;
+    bottom: 12px;
+    position: absolute;
+}
+.celsius .time-wrap2 h5{
+    text-align: center;
+    font-size: 11px;
+    font-weight: normal;
+    color: #aaa;
+}
+.celsius .time-wrap2 h5 > i.reset-icon {
+    background: transparent url(../gfxs/sprites@2x.png) no-repeat;
+    background-size: 26px 243px;
+    background-position: 0 -231px;
+    display: inline-block;
+    width: 13px;
+    height: 15px;
+    position: relative;
+    top: 5px;
+    margin-right: 2px;
+}
+table.tbl-min-max {
+    border-collapse: collapse;
+}
+table.tbl-min-max td {
+    padding: 0 0 0 12px;
+    text-align: left;
+    font-size: 12.5px;
+    font-weight: normal;
+}
+table.tbl-min-max td.title {
+    padding-left: 0;
+    font-weight: 500;
+    color: #777;
+}
+table.tbl-min-max td.red {
+     color: #FC3C20;
+}
+table.tbl-min-max td.green {
+    color: #69B11A;
+}
+table.tbl-min-max td.blue {
+    color: #3D9AD1;
+}
+
+
+
+/* Media Queries */
+@media screen and (min-width: 480px) {
+    .volume-graph {
+        background: transparent url(../gfxs/volume-bg-sm.jpg) no-repeat center center;
+        background-size: 381px 41px;
+        width: 381px;
+    }
+}
+
+@media screen and (min-width: 740px) {
+    .volume-graph {
+        background: transparent url(../gfxs/volume-bg-md.jpg) no-repeat center center;
+        background-size: 618px 41px;
+        width: 618px;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .volume-graph {
+        background: transparent url(../gfxs/volume-bg-lg.jpg) no-repeat center center;
+        background-size: 756px 41px;
+        width: 756px;
+    }
+    .mac-address {
+        transform: rotate(-90deg);
+        transform-origin: right, top;
+        -ms-transform: rotate(-90deg);
+        -ms-transform-origin:right, top;
+        -webkit-transform: rotate(-90deg);
+        -webkit-transform-origin:right, top;
+        border: 0;
+        position: absolute;
+        left: -35px;
+        top: 2px;
+    }
+    h3.sensor-page {
+        margin-top: 50px;
+    }
+    h3.sensor-page.gyroscope {
+        margin-left: 55px;
+    }
+    .no-left-padding {
+        padding-left: 5px;
+    }
+}

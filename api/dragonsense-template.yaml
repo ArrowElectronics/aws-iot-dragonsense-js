@@ -1,0 +1,1502 @@
+swagger: '2.0'
+info:
+  title: Arrow DragonSense
+  description: >
+    The DragonSense example records and displays  data produced by a
+    Texas Instruments SensorTag, CC2560.
+
+
+    The host where the API is deployed is managed by the _Amazon API
+    Gateway_.  The _basePath_ is not defined as the API Gateway will
+    add it as an additional path element.
+    
+    
+    Several of the error responses are repeated throughout the
+    Swagger definition because of Amazon API Gateway Importer,
+    Issue 117: Responses using $ref not being imported.  Once the
+    root cause of this issue is identified, then references
+    may be used rather than the repeated definition.
+  version: 0.1.0
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+parameters:
+  ContentTypeHeader:
+    name: Content-Type
+    description: |
+      The content type of the request
+    in: header
+    type: string
+  AcceptHeader:
+    name: Accept
+    description: |
+      The accept type for the response
+    in: header
+    type: string
+responses:
+  InvalidEntityError:
+    description: |
+      The request was invalid.  Please check the developer documentation
+      and validate the content of the request.
+    headers:
+      Access-Control-Allow-Headers:
+        type: string
+      Access-Control-Allow-Origin:
+        type: string
+    schema:
+      '$ref': '#/definitions/Error'
+    examples:
+      application/json: |
+        {
+          "message": "InvalidEntityError: The entity is invalid."
+        }
+  ResourceNotFoundError:
+    description: |
+      The resource was not found in the environment.  For example,
+      this error might be raised when a resource associated with
+      a non-existent thing is attempted to be created.
+    headers:
+      Access-Control-Allow-Headers:
+        type: string
+      Access-Control-Allow-Origin:
+        type: string
+    schema:
+      '$ref': '#/definitions/Error'
+    examples:
+      application/json: |
+        {
+          "message": "ResourceNotFoundError:  An unknown error occurred, please consult the logs for more information."
+        }
+  UnknownError:
+    description: |
+      An internal service error has occurred.  This may be the result
+      of an improper configuration such as invalid permissions.  For
+      some specific errors, such as invalid permissions, a specific
+      error will be returned (AccessDeniedError).
+    headers:
+      Access-Control-Allow-Headers:
+        type: string
+      Access-Control-Allow-Origin:
+        type: string
+    schema:
+      '$ref': '#/definitions/Error'
+    examples:
+      application/json: |
+        {
+          "message": "AccessDeniedError:  Please check the permissions needed to perform this function."
+        }
+paths:
+  /things:
+    get:
+      summary: Get the collection of things
+      description: |
+        Provides the collection of things that have an associated
+        principal.
+      parameters:
+        - '$ref': '#/parameters/ContentTypeHeader'
+        - '$ref': '#/parameters/AcceptHeader'
+      tags:
+        - Things
+      responses:
+        '200':
+          description: |
+            An array of things
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/ThingList'
+          examples:
+            application/json: |
+              {
+                "thingId": "MyThing",
+                "attributes": {
+                  "reference": "ArrowDragonSense"
+                }
+              }
+        '500':
+          description: |
+            An internal service error has occurred.  This may be the result
+            of an improper configuration such as invalid permissions.  For
+            some specific errors, such as invalid permissions, a specific
+            error will be returned (AccessDeniedError).
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "AccessDeniedError:  Please check the permissions needed to perform this function."
+              }
+      x-amazon-apigateway-integration:
+        type: AWS
+        httpMethod: 'POST'
+        uri: 'arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${accountNumber}:function:DragonSense-things/invocations'
+        credentials: 'arn:aws:iam::${accountNumber}:role/DragonSense-ApiGateway-${ext}'
+        requestTemplates:
+          application/json: |
+            {
+              "action": "retrieve",
+              "message": {}
+            }
+        responses:
+          'AccessDeniedError:.*':
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'UnknownError:.*':
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: null
+    options:
+      summary: CORS support
+      description: |
+        Enable CORS by returning correct headers
+      tags:
+        - CORS
+      responses:
+        '200':
+          description: Default response for CORS method
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+      x-amazon-apigateway-integration:
+        type: mock
+        httpMethod: 'GET'
+        requestTemplates:
+          application/json: |
+            {
+              "statusCode" : 200
+            }
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                {}
+  '/things/{thingId}':
+    parameters:
+      - name: thingId
+        description: The identifier of the thing.
+        in: path
+        required: true
+        type: string
+        minLength: 1
+        maxLength: 255
+        pattern: '^[a-zA-Z0-9_-]$'
+    get:
+      summary: Thing
+      description: |
+        Retrieves a thing with an identifier of _thingId_
+      parameters:
+        - '$ref': '#/parameters/ContentTypeHeader'
+        - '$ref': '#/parameters/AcceptHeader'
+      tags:
+        - Things
+      responses:
+        '200':
+          description: |
+            The thing associated with _thingId_
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Thing'
+        '400':
+          description: |
+            The request was invalid.  Please check the developer documentation
+            and validate the content of the request.
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "InvalidEntityError: The entity is invalid."
+              }
+        '404':
+          description: |
+            The resource was not found in the environment.  For example,
+            this error might be raised when a resource associated with
+            a non-existent thing is attempted to be created.
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "ResourceNotFoundError:  An unknown error occurred, please consult the logs for more information."
+              }
+        '500':
+          description: |
+            An internal service error has occurred.  This may be the result
+            of an improper configuration such as invalid permissions.  For
+            some specific errors, such as invalid permissions, a specific
+            error will be returned (AccessDeniedError).
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "AccessDeniedError:  Please check the permissions needed to perform this function."
+              }
+      x-amazon-apigateway-integration:
+        type: AWS
+        httpMethod: 'POST'
+        uri: 'arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${accountNumber}:function:DragonSense-things/invocations'
+        credentials: 'arn:aws:iam::${accountNumber}:role/DragonSense-ApiGateway-${ext}'
+        requestTemplates:
+          application/json: |
+            {
+              "action": "retrieve",
+              "message": {
+                "thingId": "$input.params('thingId')"
+              }
+            }
+        responses:
+          'InvalidEntityError:.*':
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'ResourceNotFoundError:.*':
+            statusCode: '404'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'AccessDeniedError:.*':
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'UnknownError:.*':
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: null
+    options:
+      summary: CORS support
+      description: |
+        Enable CORS by returning correct headers
+      tags:
+        - CORS
+      responses:
+        '200':
+          description: Default response for CORS method
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+      x-amazon-apigateway-integration:
+        type: mock
+        httpMethod: 'GET'
+        requestTemplates:
+          application/json: |
+            {
+              "statusCode" : 200
+            }
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                {}
+  '/things/{thingId}/sensors':
+    parameters:
+      - name: thingId
+        description: The identifier of the thing.
+        in: path
+        required: true
+        type: string
+        minLength: 1
+        maxLength: 255
+        pattern: '^[a-zA-Z0-9_-]$'
+    get:
+      summary: Retrieve the sensors for a given thing.
+      description: |
+        Retrieves an array of sensors for a thing with an
+        identifier of _thingId_
+      tags:
+        - Sensors
+      parameters:
+        - '$ref': '#/parameters/ContentTypeHeader'
+        - '$ref': '#/parameters/AcceptHeader'
+      responses:
+        '200':
+          description: |
+            A list of sensors.
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/SensorList'
+          examples:
+            application/json: |
+              [
+                {
+                  "sensorId": "4c7b48f8-0330-4608-974e-5dca74868d81",
+                  "systemId": "b6a6a4c212b7ebfa808037a9",
+                  "manufacturerName": "Texas Instruments",
+                  "firmwareVersion": "1.0.0",
+                  "hardwareVersion": 1
+                },
+                {
+                  "sensorId": "b597ff35-49d6-4bb2-935e-9d198bb6702a",
+                  "systemId": "4bf715d94a4a8445c5cfdcb1",
+                  "manufacturerName": "Texas Instruments",
+                  "firmwareVersion": "1.0.2",
+                  "hardwareVersion": 2,
+                  "softwareVersion": "1.5.3"
+                }
+              ]
+        '404':
+          description: |
+            The resource was not found in the environment.  For example,
+            this error might be raised when a resource associated with
+            a non-existent thing is attempted to be created.
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "ResourceNotFoundError:  An unknown error occurred, please consult the logs for more information."
+              }
+        '500':
+          description: |
+            An internal service error has occurred.  This may be the result
+            of an improper configuration such as invalid permissions.  For
+            some specific errors, such as invalid permissions, a specific
+            error will be returned (AccessDeniedError).
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "AccessDeniedError:  Please check the permissions needed to perform this function."
+              }
+      x-amazon-apigateway-integration:
+        type: AWS
+        httpMethod: 'POST'
+        uri: 'arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${accountNumber}:function:DragonSense-sensors/invocations'
+        credentials: 'arn:aws:iam::${accountNumber}:role/DragonSense-ApiGateway-${ext}'
+        requestTemplates:
+          application/json: |
+            {
+              "action": "retrieve",
+              "message": {
+                "thingId": "$input.params('thingId')"
+              }
+            }
+        responses:
+          'InvalidEntityError:.*':
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'ResourceNotFoundError:.*':
+            statusCode: '404'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'AccessDeniedError:.*':
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'UnknownError:.*':
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: null
+    delete:
+      summary: Delete the sensors for a given thing.
+      description: |
+        Deletes the sensors for a thing with an identifier of _thingId_
+      tags:
+        - Sensors
+      parameters:
+        - '$ref': '#/parameters/ContentTypeHeader'
+        - '$ref': '#/parameters/AcceptHeader'
+      responses:
+        '204':
+          description: |
+            No content is returned.
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+        '404':
+          description: |
+            The resource was not found in the environment.  For example,
+            this error might be raised when a resource associated with
+            a non-existent thing is attempted to be created.
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "ResourceNotFoundError:  An unknown error occurred, please consult the logs for more information."
+              }
+        '500':
+          description: |
+            An internal service error has occurred.  This may be the result
+            of an improper configuration such as invalid permissions.  For
+            some specific errors, such as invalid permissions, a specific
+            error will be returned (AccessDeniedError).
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "AccessDeniedError:  Please check the permissions needed to perform this function."
+              }
+      x-amazon-apigateway-integration:
+        type: AWS
+        httpMethod: 'POST'
+        uri: 'arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${accountNumber}:function:DragonSense-sensors/invocations'
+        credentials: 'arn:aws:iam::${accountNumber}:role/DragonSense-ApiGateway-${ext}'
+        requestTemplates:
+          application/json: |
+            #set($limit = $input.params('limit'))
+            {
+              "action": "delete",
+              "message": {
+                "thingId": "$input.params('thingId')"
+              }
+            }
+        responses:
+          'InvalidEntityError:.*':
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'ResourceNotFoundError:.*':
+            statusCode: '404'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'AccessDeniedError:.*':
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'UnknownError:.*':
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          default:
+            statusCode: '204'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: null
+    options:
+      summary: CORS support
+      description: |
+        Enable CORS by returning correct headers
+      tags:
+        - CORS
+      responses:
+        '200':
+          description: Default response for CORS method
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+      x-amazon-apigateway-integration:
+        type: mock
+        httpMethod: 'GET,DELETE'
+        requestTemplates:
+          application/json: |
+            {
+              "statusCode" : 200
+            }
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                {}
+  '/things/{thingId}/sensors/{sensorId}':
+    parameters:
+      - name: thingId
+        description: The identifier of the thing.
+        in: path
+        required: true
+        type: string
+        minLength: 1
+        maxLength: 255
+        pattern: '^[a-zA-Z0-9_-]$'
+      - name: sensorId
+        description: The identifier of the sensor.
+        in: path
+        required: true
+        type: string
+        minLength: 36
+        maxLength: 36
+        pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+    get:
+      summary: Retrieve the information about a sensor
+      description: |
+        Retrieves the information about a sensor
+      parameters:
+        - '$ref': '#/parameters/ContentTypeHeader'
+        - '$ref': '#/parameters/AcceptHeader'
+      tags:
+        - Sensors
+      responses:
+        '200':
+          description: |
+            The sensor information with an identifier of _sensorId_
+            using the thing with an identifier of _thingId_ as a
+            gateway.
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Sensor'
+          examples:
+            application/json: |
+              {
+                "sensorId": "c9f58ab3-9739-46bc-baf6-e36d2c367302",
+                "manufacturerName": "Texas Instruments",
+                "firmwareVersion": "1.0.1",
+                "hardwareVersion": 2
+              }
+        '400':
+          description: |
+            The request was invalid.  Please check the developer
+            documentation and validate the content of the request.
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "InvalidEntityError: The entity is invalid."
+              }
+        '404':
+          description: |
+            The resource was not found in the environment.  For example,
+            this error might be raised when a resource associated with
+            a non-existent thing is attempted to be created.
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "ResourceNotFoundError:  An unknown error occurred, please consult the logs for more information."
+              }
+        '500':
+          description: |
+            An internal service error has occurred.  This may be the result
+            of an improper configuration such as invalid permissions.  For
+            some specific errors, such as invalid permissions, a specific
+            error will be returned (AccessDeniedError).
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "AccessDeniedError:  Please check the permissions needed to perform this function."
+              }
+      x-amazon-apigateway-integration:
+        type: AWS
+        httpMethod: 'POST'
+        uri: 'arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${accountNumber}:function:DragonSense-sensors/invocations'
+        requestTemplates:
+          application/json: |
+            {
+              "action": "retrieve",
+              "message": {
+                "thingId": "$input.params('thingId')",
+                "sensorId": "$input.params('sensorId')"
+              }
+            }
+        credentials: 'arn:aws:iam::${accountNumber}:role/DragonSense-ApiGateway-${ext}'
+        responses:
+          'InvalidEntityError:.*':
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'ResourceNotFoundError:.*':
+            statusCode: '404'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'AccessDeniedError:.*':
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'UnknownError:.*':
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: null
+    options:
+      summary: CORS support
+      description: |
+        Enable CORS by returning correct headers
+      tags:
+        - CORS
+      responses:
+        '200':
+          description: Default response for CORS method
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+      x-amazon-apigateway-integration:
+        type: mock
+        httpMethod: 'GET'
+        requestTemplates:
+          application/json: |
+            {
+              "statusCode" : 200
+            }
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                {}
+  '/things/{thingId}/sensors/{sensorId}/observations':
+    parameters:
+      - name: thingId
+        description: The identifier of the thing.
+        in: path
+        required: true
+        type: string
+        minLength: 1
+        maxLength: 255
+        pattern: '^[a-zA-Z0-9_-]$'
+      - name: sensorId
+        description: The identifier of the sensor.
+        in: path
+        required: true
+        type: string
+        minLength: 36
+        maxLength: 36
+        pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+    get:
+      summary: Retrieve the observations of a sensor.
+      description: |
+        Retrieves the observations for a sensor
+      parameters:
+        - '$ref': '#/parameters/ContentTypeHeader'
+        - '$ref': '#/parameters/AcceptHeader'
+        - name: limit
+          description: |
+            The maximum number of sensors to retrieve.
+          in: query
+          type: integer
+          default: 10
+      tags:
+        - Observations
+      responses:
+        '200':
+          description: |
+            The observations recorded by sensor with an identifer of
+            _sensorId_ using the thing with identifier of _thingId_ as
+            a gateway.
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/ObservationList'
+          examples:
+            application/json: |
+              [
+                {
+                  "observationId": "b2d7cc49-2284-430e-8408-c7294128f30a",
+                  "objTemperature": 23.2,
+                  "ambTemperature": 22.4,
+                  "luxometer": 1102,
+                  "accelerometer": [
+                    1.2, 2.1, 4.8
+                  ],
+                  "gyroscope": [
+                    2.2, 5.2, 3.6
+                  ],
+                  "timestamp": 1453331682,
+                  "lastSend": 1453323628
+                },
+                {
+                  "observationId": "9c8b942b-a1ca-4676-afb4-acdd52b6a4d2",
+                  "objTemperature": 23.4,
+                  "ambTemperature": 23.1,
+                  "luxometer": 1082,
+                  "accelerometer": [
+                    4.1, 8.5, 2.9
+                  ],
+                  "gyroscope": [
+                    1.0, 2.8, 6.2
+                  ],
+                  "timestamp": 1453331682,
+                  "lastSend": 1453323628
+                }
+              ]
+        '400':
+          description: |
+            The request was invalid.  Please check the developer
+            documentation and validate the content of the request.
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "InvalidEntityError: The entity is invalid."
+              }
+        '404':
+          description: |
+            The resource was not found in the environment.  For example,
+            this error might be raised when a resource associated with
+            a non-existent thing is attempted to be created.
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "ResourceNotFoundError:  An unknown error occurred, please consult the logs for more information."
+              }
+        '500':
+          description: |
+            An internal service error has occurred.  This may be the result
+            of an improper configuration such as invalid permissions.  For
+            some specific errors, such as invalid permissions, a specific
+            error will be returned (AccessDeniedError).
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "AccessDeniedError:  Please check the permissions needed to perform this function."
+              }
+      x-amazon-apigateway-integration:
+        type: AWS
+        httpMethod: 'POST'
+        uri: 'arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${accountNumber}:function:DragonSense-observations/invocations'
+        requestTemplates:
+          application/json: |
+            #set($limit = $input.params('limit'))
+            {
+              "action": "retrieve",
+              "message": {
+                "thingId": "$input.params('thingId')",
+                "systemId": "$input.params('sensorId')"#if ($limit != ""),
+                "limit": $limit#end
+              }
+            }
+        credentials: 'arn:aws:iam::${accountNumber}:role/DragonSense-ApiGateway-${ext}'
+        responses:
+          'InvalidEntityError:.*':
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'ResourceNotFoundError:.*':
+            statusCode: '404'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'AccessDeniedError:.*':
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'UnknownError:.*':
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: null
+    options:
+      summary: CORS support
+      description: |
+        Enable CORS by returning correct headers
+      tags:
+        - CORS
+      responses:
+        '200':
+          description: Default response for CORS method
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+      x-amazon-apigateway-integration:
+        type: mock
+        httpMethod: 'GET'
+        requestTemplates:
+          application/json: |
+            {
+              "statusCode" : 200
+            }
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                {}
+  '/things/{thingId}/sensors/{sensorId}/observations/{observationId}':
+    parameters:
+      - name: thingId
+        description: The identifier of the thing.
+        in: path
+        required: true
+        type: string
+        minLength: 1
+        maxLength: 255
+        pattern: '^[a-zA-Z0-9_-]$'
+      - name: sensorId
+        description: The identifier of the sensor.
+        in: path
+        required: true
+        type: string
+        minLength: 36
+        maxLength: 36
+        pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+      - name: observationId
+        description: The identifier of the observation.
+        in: path
+        required: true
+        type: string
+        minLength: 36
+        maxLength: 36
+        pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+    get:
+      summary: Retrieve the observation of a sensor.
+      description: |
+        Retrieves the observation for a sensor
+      parameters:
+        - '$ref': '#/parameters/ContentTypeHeader'
+        - '$ref': '#/parameters/AcceptHeader'
+        - name: limit
+          description: |
+            The maximum number of sensors to retrieve.
+          in: query
+          type: integer
+          default: 10
+      tags:
+        - Observations
+      responses:
+        '200':
+          description: |
+            The observation recorded by sensor with an identifer of
+            _sensorId_ using the thing with identifier of _thingId_ as
+            a gateway.
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Observation'
+          examples:
+            application/json: |
+              {
+                "observationId": "b2d7cc49-2284-430e-8408-c7294128f30a",
+                "objTemperature": 23.2,
+                "ambTemperature": 22.4,
+                "luxometer": 1102,
+                "accelerometer": [
+                  1.2, 2.1, 4.8
+                ],
+                "gyroscope": [
+                  2.2, 5.2, 3.6
+                ],
+                "timestamp": 1453331682,
+                "lastSend": 1453323628
+              }
+                {
+                  "observationId": "9c8b942b-a1ca-4676-afb4-acdd52b6a4d2",
+                  "objTemperature": 23.4,
+                  "ambTemperature": 23.1,
+                  "luxometer": 1082,
+                  "accelerometer": [
+                    4.1, 8.5, 2.9
+                  ],
+                  "gyroscope": [
+                    1.0, 2.8, 6.2
+                  ],
+                  "timestamp": 1453331682,
+                  "lastSend": 1453323628
+                }
+              ]
+        '400':
+          description: |
+            The request was invalid.  Please check the developer
+            documentation and validate the content of the request.
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "InvalidEntityError: The entity is invalid."
+              }
+        '404':
+          description: |
+            The resource was not found in the environment.  For example,
+            this error might be raised when a resource associated with
+            a non-existent thing is attempted to be created.
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "ResourceNotFoundError:  An unknown error occurred, please consult the logs for more information."
+              }
+        '500':
+          description: |
+            An internal service error has occurred.  This may be the result
+            of an improper configuration such as invalid permissions.  For
+            some specific errors, such as invalid permissions, a specific
+            error will be returned (AccessDeniedError).
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+          schema:
+            '$ref': '#/definitions/Error'
+          examples:
+            application/json: |
+              {
+                "message": "AccessDeniedError:  Please check the permissions needed to perform this function."
+              }
+      x-amazon-apigateway-integration:
+        type: AWS
+        httpMethod: 'POST'
+        uri: 'arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${accountNumber}:function:DragonSense-observations/invocations'
+        requestTemplates:
+          application/json: |
+            {
+              "action": "retrieve",
+              "message": {
+                "thingId": "$input.params('thingId')",
+                "sensorId": "$input.params('sensorId')",
+                "observationId": "$input.params('observationId')"#if ($limit != ""),
+                "limit": $limit#end
+              }
+            }
+        credentials: 'arn:aws:iam::${accountNumber}:role/DragonSense-ApiGateway-${ext}'
+        responses:
+          'InvalidEntityError:.*':
+            statusCode: '400'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'ResourceNotFoundError:.*':
+            statusCode: '404'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'AccessDeniedError:.*':
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          'UnknownError:.*':
+            statusCode: '500'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                #set($inputRoot = $input.path('$'))
+                {
+                  "message": "$inputRoot.errorMessage"
+                }
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: null
+    options:
+      summary: CORS support
+      description: |
+        Enable CORS by returning correct headers
+      tags:
+        - CORS
+      responses:
+        '200':
+          description: Default response for CORS method
+          headers:
+            Access-Control-Allow-Headers:
+              type: string
+            Access-Control-Allow-Methods:
+              type: string
+            Access-Control-Allow-Origin:
+              type: string
+      x-amazon-apigateway-integration:
+        type: mock
+        httpMethod: 'GET'
+        requestTemplates:
+          application/json: |
+            {
+              "statusCode" : 200
+            }
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            responseTemplates:
+              application/json: |
+                {}
+definitions:
+  Observation:
+    type: object
+    properties:
+      observationId:
+        type: string
+        description: The identifier of the sensor.
+        pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+        minLength: 36
+        maxLength: 36
+      objTemperature:
+        type: number
+        description: |
+          The temperature of the sensor tag.
+      ambTemperature:
+        type: number
+        description: |
+          The ambient temperature of the air surrounding the sensor tag.
+      luxometer:
+        type: number
+        description: |
+          A measure of the light near the sensor tag.
+      accelerometer:
+        type: array
+        description: |
+          A measure of the linear motion of the sensor tag.
+        items:
+          type: number
+      gyroscope:
+        type: array
+        description: |
+          A measure of the rotational motion of the sensor tag.
+        items:
+          type: number
+      magnetometer:
+        type: array
+        description: |
+          A measure of the magnet field near the sensor tag.
+        items:
+          type: number
+      timestamp:
+        type: integer
+        description: |
+          The number of seconds since the epoch (UTC) when the
+          observation was recorded.
+      lastSend:
+        type: integer
+        description: |
+          When the last observation was sent.
+    required:
+      - observationId
+      - objTemperature
+      - ambTemperature
+      - luxometer
+      - gyroscope
+      - timestamp
+      - lastSend
+  ObservationList:
+    type: array
+    items:
+      '$ref': '#/definitions/Observation'
+  Sensor:
+    type: object
+    properties:
+      thingId:
+        type: string
+        description: |
+          The identifier of the thing.
+      sensorId:
+        type: string
+        description: |
+          The identifier of the sensor.
+        pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+        minLength: 36
+        maxLength: 36
+      systemId:
+        type: string
+        description: |
+          The system identifier of the sensor (normally the BLE address)
+      manufacturerName:
+        type: string
+        description: |
+          The name of the sensor manufacturer tag.
+      hardwareVersion:
+        type: string
+        description: |
+          The version of the hardware of the sensor tag.
+      firmwareVersion:
+        type: string
+        description: |
+          The firmware version of the sensor tag.
+      softwareVersion:
+        type: string
+        description: |
+          The version of the software the sensor tag is using.
+      timestamp:
+        type: integer
+        description: |
+          The time in seconds (UTC) when the sensor was observed.
+    required:
+      - sensorId
+      - manufacturerName
+      - hardwareVersion
+      - firmwareVersion
+  SensorList:
+    type: array
+    items:
+      '$ref': '#/definitions/Sensor'
+  Thing:
+    type: object
+    properties:
+      thingId:
+        type: string
+        description: |
+          The attribute name.
+        minLength: 1
+        maxLength: 255
+        pattern: '^[a-zA-Z0-9_-]$'
+      attributes:
+        type: object
+        description: |
+          The attributes of a thing.
+        additionalProperties:
+          type: string
+    required:
+      - thingId
+  ThingList:
+    type: array
+    items:
+      '$ref': '#/definitions/Thing'
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+    required:
+      - message

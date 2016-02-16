@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>DragonBoard&trade; 410c | DragonSense</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/c3.min.css">
+    <link rel="stylesheet" href="css/db.css">
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- JAVASCRIPT INCLUDES -->
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/d3.min.js"></script>
+    <script src="js/c3.min.js"></script>
+    <script src="js/moment.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/dragonsense.js"></script>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+<!-- navigation -->
+<div class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid padding-lr-100">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/" class="navbar-brand"><img src='gfxs/dragon-sense-logo@2x.png' width="266" /></a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav navbar-right" id="label-account">
+                 <li class="dropdown">
+                    <a href="#" id="btn-select-device"class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false"><span id="current-thing">Select a Thing</span> <span class="caret"></span></a>
+                    <ul id="menu-select-device" class="dropdown-menu">
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div>
+
+<div class="alert alert-success" id="status-alert" style="display:none;"></div>
+<!-- ./end navigation -->
+
+<div class='container-fluid padding-lr-100'>
+    <div class="row">
+        <div class='col-lg-4'>
+             <h3 class="sensor-page gyroscope">Gyroscope</h3>
+         </div>
+         <div class='col-lg-4'>
+             <h3 class="sensor-page accelerometer">Magnetometer</h3>
+         </div>
+         <div class='col-lg-2'>
+             <h3 class="sensor-page ir-temperature"><i class="db-icon temperature-icon"></i>Temperature</h3>
+         </div>
+         <div class='col-lg-2'>
+             <h3 class="sensor-page light-intensity"><i class="db-icon intensity-icon"></i>Light Intensity</h3>
+         </div> 
+     </div>
+ <!-- sensor 1 -->
+    <div class='row'>
+        <div class='col-lg-4'>
+            <div class="row ">
+                <div class="relative">
+                    <div class="col-lg-1">
+                        <div class="mac-address"><h5 id="s1-thingid">-</h5></div>
+                    </div>
+                    <div class="col-lg-11 no-left-padding">
+                        <div class="panel pointed-corners panel-sensor-page">
+                            <div class="panel-body">
+                                <table class="tbl-min-max">
+                                    <tbody id="s1-gyro-stats">
+                                    </tbody>
+                                </table>
+                                <div class='row'>
+                                    <div class='col-lg-12'>
+                                        <div class='gyroscope-chart' id='s1-gyro-chart'></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='col-lg-4'>
+            <div class="panel panel-default pointed-corners panel-sensor-page">
+                <div class="panel-body">
+                    <table class="tbl-min-max">
+                        <tbody id='s1-accel-stats'>
+                        </tbody>
+                    </table>
+                    <div class='row'>
+                        <div class='col-md-12'>
+                            <div class='accelerometer-chart' id='s1-accel-chart'></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class='col-lg-2'>
+            <div class="panel panel-default pointed-corners panel-sensor-page">
+                <div class="panel-body celsius">
+                    <table class="tbl-min-max">
+                        <tbody id="s1-temp-stats">
+                        </tbody>
+                    </table>
+                    <h4 class="h4-center"><span id='s1-temp'>-</span> C</h4>
+                </div>
+
+            </div>
+        </div>
+        <div class='col-lg-2'>
+            <div class="panel panel-default pointed-corners panel-sensor-page">
+                <div class="panel-body celsius">
+                    <table class="tbl-min-max">
+                        <tbody id="s1-lux-stats">
+                        </tbody>
+                    </table>
+                    <h4 class="h4-center"><span id='s1-lux'>-</span> lux</h4>
+                    <div class="time-wrap2">
+                        <h5 id='s1-update'>-</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- sensor 2 -->
+    <div class='row'>
+        <div class='col-lg-4'>
+            <div class="row ">
+                <div class="relative">
+                    <div class="col-lg-1">
+                        <div class="mac-address"><h5 id="s2-thingid">-</h5></div>
+                    </div>
+                    <div class="col-lg-11 no-left-padding">
+                        <div class="panel pointed-corners panel-sensor-page">
+                            <div class="panel-body">
+                                <table class="tbl-min-max">
+                                    <tbody id="s2-gyro-stats">
+                                    </tbody>
+                                </table>
+                                <div class='row'>
+                                    <div class='col-lg-12'>
+                                        <div class='gyroscope-chart' id='s2-gyro-chart'></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='col-lg-4'>
+            <div class="panel panel-default pointed-corners panel-sensor-page">
+                <div class="panel-body">
+                    <table class="tbl-min-max">
+                        <tbody id='s2-accel-stats'>
+                        </tbody>
+                    </table>
+                    <div class='row'>
+                        <div class='col-md-12'>
+                            <div class='accelerometer-chart' id='s2-accel-chart'></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class='col-lg-2'>
+            <div class="panel panel-default pointed-corners panel-sensor-page">
+                <div class="panel-body celsius">
+                    <table class="tbl-min-max">
+                        <tbody id="s2-temp-stats">
+                        </tbody>
+                    </table>
+                    <h4 class="h4-center"><span id='s2-temp'>-</span> C</h4>
+                </div>
+
+            </div>
+        </div>
+        <div class='col-lg-2'>
+            <div class="panel panel-default pointed-corners panel-sensor-page">
+                <div class="panel-body celsius">
+                    <table class="tbl-min-max">
+                        <tbody id="s2-lux-stats">
+                        </tbody>
+                    </table>
+                    <h4 class="h4-center"><span id='s2-lux'>-</span> lux</h4>
+                    <div class="time-wrap2">
+                        <h5 id='s2-update'>-</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr/>
+    <div class="footer">
+        <p class='text-muted text-center'>
+            <small>&copy; 2015-2016 Arrow Electronics, inc. All rights reserved. Qualcomm, Adreno and Snapdragon are
+                trademarks of Qualcomm Incorporated, registered in the United States and other countries.
+            </small>
+        </p>
+    </div>
+</div>
+</body>
+</html>

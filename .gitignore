@@ -1,0 +1,11 @@
+*.iml
+.idea
+.DS_Store
+_site
+#aws.key
+#aws.crt
+Gemfile.lock
+node_modules
+logs
+dist
+api/dragonsense.yaml
